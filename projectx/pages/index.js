@@ -2,28 +2,36 @@ import { ChatOutlined, NotificationsOutlined, SearchOutlined, SettingsOutlined }
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { useRouter } from 'next/router'
+import { useUser } from '@auth0/nextjs-auth0';
+import { route } from 'next/dist/server/router'
+import NavBar from '../components/navBar'
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend'
 
-export default function Home() {
+export default withPageAuthRequired(function Home() {
+
+  const { user, error, isLoading } = useUser();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
+
   return (
-    <div className=''>
-      <div className='flex h-screen'>
-        <div className='flex flex-col space-y-4 p-5 items-center bg-[#c4c4c4]'>
-          <p className='font-mono text-3xl p-2 hover:cursor-pointer'>PROJECT X</p>
-          <p><Image className='rounded-full p-2' src="https://variety.com/wp-content/uploads/2013/06/avatar.jpg?w=1000" alt='' width={150} height={150} /></p>
-          <button><p className='font-mono text-xl p-2 hover:bg-gray-400 rounded-xl'>PROFILE</p></button>
-          <button><p className='font-mono text-xl p-2 hover:bg-gray-400 rounded-xl'>HOME</p></button>
-          <button><p className='font-mono text-xl p-2 hover:bg-gray-400 rounded-xl'>CLASSROOM</p></button>
-          <button><p className='font-mono text-xl p-2 hover:bg-gray-400 rounded-xl'>POSTS</p></button>
-          <button><p className='font-mono text-xl p-2 hover:bg-gray-400 rounded-xl'>PAYMENTS</p></button>
-          <button><p className='font-mono text-xl p-2 hover:bg-gray-400 rounded-xl'>LOGOUT</p></button>
-        </div>
+    <div className='flex text-[#5D5FEF]'>
+      <NavBar />
+      <div className='flex-grow m-7'>
+        <label className='flex bg-[#FCDDEC] p-2 rounded-2xl space-x-4'>
+          <SearchOutlined />
+          <input className='outline-none w-full bg-[#FCDDEC]' placeholder='Search...' type='text' id='search' />
+          <button><p><ChatOutlined /></p></button>
+          <button><p><NotificationsOutlined /></p></button>
+          <button><p><SettingsOutlined /></p></button>
+        </label>
       </div>
-      <header className='flex absolute top-5 right-8'>
-        <button><p className='p-2'><SearchOutlined /></p></button>
-        <button><p className='p-2'><ChatOutlined /></p></button>
-        <button><p className='p-2'><NotificationsOutlined /></p></button>
-        <button><p className='p-2'><SettingsOutlined /></p></button>
-      </header>
+      <select name="sort-by" className='absolute top-[100px] right-[38px]' id="sort-by">
+        <option>SORT BY</option>
+        <option value="1">DATE</option>
+        <option value="2">POPULARITY</option>
+      </select>
     </div>
   )
-}
+})
